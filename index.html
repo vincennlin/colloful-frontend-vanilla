@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Colloful</title>
+        <link rel="stylesheet" href="style.css" />
+    </head>
+    <body>
+        <h2>Login</h2>
+        <div>
+            <input type="text" id="usernameOrEmail" placeholder="UsernameOrEmail" />
+            <input type="password" id="password" placeholder="Password" />
+            <button onclick="login()">Login</button>
+        </div>
+        <p id="loginStatus"></p>
+        <hr />
+
+        <h1>Colloful</h1>
+
+        <!-- 搜尋或載入單字 -->
+        <div>
+            <input type="text" id="wordIdInput" placeholder="Enter Word ID" />
+            <button onclick="loadWord()">Load Word</button>
+        </div>
+
+        <!-- 顯示結果 -->
+        <div id="wordContainer"></div>
+
+        <script src="script.js"></script>
+    </body>
+</html>

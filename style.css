@@ -1,0 +1,9 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
+.definition, .collocation, .sentence {
+    margin-left: 20px;
+    padding: 5px;
+    border-left: 2px solid #ccc;
+}
