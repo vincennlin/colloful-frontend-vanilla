@@ -42,6 +42,10 @@ function displayWords(words, page = 1) {
         const wordDiv = document.createElement("div");
         wordDiv.classList.add("word-card");
 
+        wordDiv.addEventListener("click", () => {
+            window.location.href = `word-detail.html?id=${word.id}`;
+        });
+
         const wordTitle = document.createElement("h3");
         wordTitle.textContent = word.name;
         wordDiv.appendChild(wordTitle);
@@ -67,9 +71,12 @@ function displayWords(words, page = 1) {
 function updatePaginationControls(totalItems) {
     const totalPages = Math.ceil(totalItems / pageSize);
 
-    document.getElementById("pageInfo").textContent = `Page ${currentPage} of ${totalPages}`;
+    document.getElementById(
+        "pageInfo"
+    ).textContent = `Page ${currentPage} of ${totalPages}`;
     document.getElementById("prevPageBtn").disabled = currentPage === 1;
-    document.getElementById("nextPageBtn").disabled = currentPage === totalPages;
+    document.getElementById("nextPageBtn").disabled =
+        currentPage === totalPages;
 }
 
 document.getElementById("prevPageBtn").addEventListener("click", () => {

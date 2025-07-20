@@ -9,12 +9,70 @@ body {
     padding: 5px;
     border-left: 2px solid #ccc;
 }
+
 .word-card {
-    border: 1px solid #aaa;
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
     border-radius: 8px;
-    padding: 15px;
+    padding: 12px;
+    margin: 10px;
+    height: 300px; /* ✅ 固定高度 */
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    cursor: pointer;
+}
+
+.word-card p {
+    margin: 4px 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.word-card h3 {
+    margin: 0 0 8px 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.word-card:hover {
+    background-color: #f0f8ff;
+}
+
+.word-detail-card {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 12px;
     margin: 10px 0;
-    background: #f9f9f9;
+    overflow: visible;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    cursor: default;
+}
+
+.word-detail-card p {
+    margin: 6px 0;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
+}
+
+.word-detail-card h3 {
+    margin: 0 0 12px 0;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
+}
+
+.word-detail-card:hover {
+    background-color: transparent;
 }
 
 #wordList {
