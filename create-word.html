@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Create Word - Colloful</title>
+        <link rel="stylesheet" href="css/style.css" />
+    </head>
+    <body>
+        <h1>➕ 新增單字</h1>
+
+        <form id="createWordForm">
+            <label for="wordName">單字名稱：</label><br />
+            <input
+                type="text"
+                id="wordName"
+                name="wordName"
+                required
+            /><br /><br />
+
+            <div id="definitionsContainer">
+                <h3>Definitions</h3>
+            </div>
+            <button type="button" onclick="addDefinition()">＋ 新增定義</button
+            ><br /><br />
+
+            <button type="submit">✅ 新增單字</button>
+            <button type="button" onclick="location.href='dashboard.html'">
+                返回
+            </button>
+        </form>
+
+        <div id="message" style="margin-top: 20px; color: green"></div>
+
+        <script src="js/auth.js"></script>
+        <script src="js/create-word.js"></script>
+    </body>
+</html>

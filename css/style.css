@@ -92,3 +92,30 @@ body {
     font-weight: bold;
     font-size: 16px;
 }
+
+.definition-block,
+.collocation-block,
+.sentence-block {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 6px;
+    position: relative;
+}
+.collocation-block {
+    margin-left: 20px;
+}
+.sentence-block {
+    margin-left: 40px;
+}
+.remove-btn {
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    margin-top: 5px;
+    cursor: pointer;
+    border-radius: 4px;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+}

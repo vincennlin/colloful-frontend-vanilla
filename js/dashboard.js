@@ -7,13 +7,13 @@ document.addEventListener("DOMContentLoaded", () => {
     fetchWords();
 });
 
-let currentWordList = [];
 let currentPage = 1;
 const pageSize = 9;
+let totalPages = 1;
 
-function fetchWords() {
+function fetchWords(page = 1) {
     const token = localStorage.getItem("jwtToken");
-    fetch(`${API_BASE}/words`, {
+    fetch(`${API_BASE}/words?pageNo=${page - 1}&pageSize=${pageSize}`, {
         method: "GET",
         headers: {
             Authorization: "Bearer " + token,
@@ -21,24 +21,21 @@ function fetchWords() {
     })
         .then((res) => res.json())
         .then((data) => {
-            currentWordList = data.content;
-            currentPage = 1;
-            displayWords(currentWordList, currentPage);
+            currentPage = data.pageNo + 1;
+            totalPages = data.totalPages;
+            displayWords(data.content);
+            updatePaginationControls();
         })
         .catch((err) => {
             console.error("Failed to fetch words:", err);
         });
 }
 
-function displayWords(words, page = 1) {
+function displayWords(words) {
     const container = document.getElementById("wordList");
     container.innerHTML = "";
 
-    const startIndex = (page - 1) * pageSize;
-    const endIndex = startIndex + pageSize;
-    const pageWords = words.slice(startIndex, endIndex);
-
-    pageWords.forEach((word) => {
+    words.forEach((word) => {
         const wordDiv = document.createElement("div");
         wordDiv.classList.add("word-card");
 
@@ -64,13 +61,9 @@ function displayWords(words, page = 1) {
 
         container.appendChild(wordDiv);
     });
-
-    updatePaginationControls(words.length);
 }
 
-function updatePaginationControls(totalItems) {
-    const totalPages = Math.ceil(totalItems / pageSize);
-
+function updatePaginationControls() {
     document.getElementById(
         "pageInfo"
     ).textContent = `Page ${currentPage} of ${totalPages}`;
@@ -81,15 +74,14 @@ function updatePaginationControls(totalItems) {
 
 document.getElementById("prevPageBtn").addEventListener("click", () => {
     if (currentPage > 1) {
-        currentPage--;
-        displayWords(currentWordList, currentPage);
+        fetchWords(currentPage - 1);
     }
 });
 
 document.getElementById("nextPageBtn").addEventListener("click", () => {
-    const totalPages = Math.ceil(currentWordList.length / pageSize);
     if (currentPage < totalPages) {
-        currentPage++;
-        displayWords(currentWordList, currentPage);
+        fetchWords(currentPage + 1);
     }
 });
+
+fetchWords();

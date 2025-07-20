@@ -6,11 +6,22 @@
         <link rel="stylesheet" href="css/style.css" />
     </head>
     <body>
-        <div id="header" style="display: flex; align-items: center; justify-content: space-between;">
-            <h1>📚 Colloful - Word List</h1>
-            <button onclick="logout()">Logout</button>
-          </div>
-          
+        <h1
+            style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            "
+        >
+            📚 Colloful - Word List
+            <div>
+                <button onclick="location.href='create-word.html'">
+                    ➕ 新增單字
+                </button>
+                <button onclick="logout()">Logout</button>
+            </div>
+        </h1>
+
         <div id="wordList">Loading words...</div>
 
         <div id="pagination" style="margin-top: 20px; text-align: center">
