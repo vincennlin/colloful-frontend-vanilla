@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
-        <title>Dashboard - Colloful</title>
+        <title>Review - Colloful</title>
         <link rel="stylesheet" href="css/style.css" />
     </head>
     <body>
@@ -13,17 +13,14 @@
                 align-items: center;
             "
         >
-            📚 Colloful - Word List
+            🔁 Colloful - Review Words
             <div>
-                <button onclick="location.href='review.html'">🔁 Review</button>
-                <button onclick="location.href='create-word.html'">
-                    ➕ Add
-                </button>
+                <button onclick="location.href='dashboard.html'">🏠 Back</button>
                 <button onclick="logout()">Logout</button>
             </div>
         </h1>
 
-        <div id="wordList">Loading words... Is Backend Running?</div>
+        <div id="wordList">Loading review words...</div>
 
         <div id="pagination" style="margin-top: 20px; text-align: center">
             <button id="prevPageBtn">← Prev</button>
@@ -32,6 +29,6 @@
         </div>
 
         <script src="js/auth.js"></script>
-        <script type="module" src="js/dashboard.js"></script>
+        <script type="module" src="js/review.js"></script>
     </body>
 </html>
