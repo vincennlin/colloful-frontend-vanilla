@@ -11,7 +11,8 @@ document.addEventListener("DOMContentLoaded", () => {
         fetchWordDetail(wordId);
         setupEditButton(wordId);
     } else {
-        document.getElementById("wordDetail").textContent = "No word ID provided.";
+        document.getElementById("wordDetail").textContent =
+            "No word ID provided.";
     }
 });
 
@@ -36,7 +37,8 @@ function fetchWordDetail(id) {
         })
         .catch((err) => {
             console.error("Error fetching word:", err);
-            document.getElementById("wordDetail").textContent = "Error loading word.";
+            document.getElementById("wordDetail").textContent =
+                "Error loading word.";
         });
 }
 
@@ -52,19 +54,72 @@ function renderWordDetail(word) {
     wordDiv.appendChild(wordTitle);
 
     word.definitions.forEach((def) => {
+        // 包裝definition與按鈕的容器
+        const defContainer = document.createElement("div");
+        defContainer.style.display = "flex";
+        defContainer.style.alignItems = "center";
+        defContainer.style.marginBottom = "8px";
+
         const defP = document.createElement("p");
         defP.textContent = `📖 ${def.meaning} (${def.part_of_speech})`;
-        wordDiv.appendChild(defP);
+        defP.style.flexGrow = "1"; // 讓文字撐滿空間
+
+        const genBtn = document.createElement("button");
+        genBtn.textContent = "COLLOFUL!";
+        genBtn.style.marginLeft = "12px";
+        genBtn.type = "button";
+
+        // 按鈕事件：送 POST 請求
+        genBtn.addEventListener("click", async () => {
+            try {
+                const originalText = genBtn.textContent;
+                genBtn.textContent = "COLLOFULING...";
+                genBtn.disabled = true;
+
+                const token = getToken();
+                const res = await fetch(
+                    `${API_BASE}/definitions/${def.id}/collocations/generate`,
+                    {
+                        method: "POST",
+                        headers: {
+                            Authorization: token,
+                            "Content-Type": "application/json",
+                        },
+                    }
+                );
+
+                if (!res.ok) {
+                    throw new Error(`生成失敗，狀態碼: ${res.status}`);
+                }
+
+                alert("COLLFUL! 搭配詞生成成功！");
+                location.reload(); // 重新載入頁面，更新資料
+            } catch (err) {
+                console.error(err);
+                alert("搭配詞生成失敗，請稍後再試");
+            } finally {
+                genBtn.textContent = "COLLOFUL!";
+                genBtn.disabled = false;
+            }
+        });
+
+        defContainer.appendChild(defP);
+        defContainer.appendChild(genBtn);
+        wordDiv.appendChild(defContainer);
 
         def.collocations.forEach((colloc) => {
             const collocP = document.createElement("p");
-            collocP.textContent = `🔗 ${colloc.content} - ${colloc.meaning || ""}`;
+            collocP.textContent = `🔗 ${colloc.content} - ${
+                colloc.meaning || ""
+            }`;
             wordDiv.appendChild(collocP);
 
             colloc.sentences.forEach((sent) => {
                 const sentP = document.createElement("p");
                 sentP.style.marginLeft = "20px";
-                sentP.textContent = `📝 ${sent.content}（${sent.translation || ""}）`;
+                sentP.textContent = `📝 ${sent.content}（${
+                    sent.translation || ""
+                }）`;
                 wordDiv.appendChild(sentP);
             });
         });
@@ -85,7 +140,9 @@ function setupEditButton(wordId) {
     const deleteBtn = document.getElementById("deleteWordBtn");
     if (deleteBtn) {
         deleteBtn.addEventListener("click", () => {
-            const confirmed = confirm("確定要刪除這個單字嗎？這個動作無法復原。");
+            const confirmed = confirm(
+                "確定要刪除這個單字嗎？這個動作無法復原。"
+            );
             if (confirmed) {
                 deleteWord(wordId);
             }
@@ -118,23 +175,24 @@ function addDefinitionToDetail() {
     const defBlock = createDefinitionBlock(null, true, false); // 沒新增搭配詞按鈕
     container.appendChild(defBlock);
     updateSubmitButtonVisibility();
-  }
-  
-  // 事件代理監聽刪除按鈕
-  document.getElementById("newDefinitionsContainer").addEventListener("click", (e) => {
-    if (e.target.classList.contains("remove-btn")) {
-      e.target.closest(".definition-block").remove();
-      updateSubmitButtonVisibility();
-    }
-  });
+}
+
+// 事件代理監聽刪除按鈕
+document
+    .getElementById("newDefinitionsContainer")
+    .addEventListener("click", (e) => {
+        if (e.target.classList.contains("remove-btn")) {
+            e.target.closest(".definition-block").remove();
+            updateSubmitButtonVisibility();
+        }
+    });
 
 function updateSubmitButtonVisibility() {
     const container = document.getElementById("newDefinitionsContainer");
     const submitBtn = document.getElementById("submitNewDefinitionsBtn");
     const hasDefs = container.querySelectorAll(".definition-block").length > 0;
     submitBtn.style.display = hasDefs ? "inline-block" : "none";
-  }
-  
+}
 
 function submitNewDefinitions() {
     const params = new URLSearchParams(window.location.search);
@@ -153,11 +211,11 @@ function submitNewDefinitions() {
         return {
             meaning,
             part_of_speech: pos,
-            collocations: [] // 不包含搭配詞
+            collocations: [], // 不包含搭配詞
         };
     });
 
-    fetch(`http://localhost:8080/api/v1/words/${wordId}/details`, {
+    fetch(`${API_BASE}/words/${wordId}/details`, {
         method: "PUT",
         headers: {
             Authorization: getToken(),
