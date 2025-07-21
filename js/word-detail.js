@@ -155,7 +155,6 @@ function renderWordDetail(word) {
                     throw new Error(`生成失敗，狀態碼: ${res.status}`);
                 }
 
-                alert("COLLOFUL! 搭配詞生成成功！");
                 location.reload();
             } catch (err) {
                 console.error(err);

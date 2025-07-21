@@ -158,7 +158,6 @@ function displayWords(words) {
                     );
 
                     if (!res.ok) throw new Error("Review failed");
-                    alert(`複習「${word.name}」成功 (${option})`);
                 } catch (err) {
                     alert("送出複習結果失敗：" + err.message);
                 }
