@@ -11,9 +11,15 @@ let currentPage = 1;
 const pageSize = 9;
 let totalPages = 1;
 
+let currentFilter = "review";
+
 function fetchWords(page = 1) {
     const token = localStorage.getItem("jwtToken");
-    fetch(`${API_BASE}/words?pageNo=${page - 1}&pageSize=${pageSize}`, {
+    const baseUrl =
+        currentFilter === "review"
+            ? `${API_BASE}/words/review`
+            : `${API_BASE}/words`;
+    fetch(`${baseUrl}?pageNo=${page - 1}&pageSize=${pageSize}`, {
         method: "GET",
         headers: {
             Authorization: getToken(),
@@ -30,6 +36,11 @@ function fetchWords(page = 1) {
             console.error("Failed to fetch words:", err);
         });
 }
+
+document.getElementById("wordFilter").addEventListener("change", (e) => {
+    currentFilter = e.target.value;
+    fetchWords(1); // 回到第一頁
+});
 
 function displayWords(words) {
     const container = document.getElementById("wordList");
@@ -158,6 +169,7 @@ function displayWords(words) {
                     );
 
                     if (!res.ok) throw new Error("Review failed");
+                    location.reload();
                 } catch (err) {
                     alert("送出複習結果失敗：" + err.message);
                 }
