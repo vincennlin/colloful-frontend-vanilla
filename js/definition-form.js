@@ -29,12 +29,8 @@ function createDefinitionBlock(def = {}, isNew = true, showAddCollocationBtn = t
 
     defBlock.setAttribute("data-def-index", definitionIndex++);
 
-    defBlock.innerHTML = `
-        ${
-            isNew
-                ? `<button type="button" class="remove-btn" onclick="removeDefinition(this)">❌</button>`
-                : ``
-        }
+    defBlock.innerHTML = `<button type="button" class="remove-btn" onclick="removeDefinition(this)">❌</button>
+
 
         <label>Meaning</label><br />
         <input type="text" name="meaning" class="definition-meaning" value="${def.meaning || ""}" required /><br />
@@ -80,12 +76,8 @@ function createCollocationBlock(colloc = {}, isNew = true) {
         collocBlock.dataset.collocId = colloc.id;
     }
 
-    collocBlock.innerHTML = `
-        ${
-            isNew
-                ? `<button type="button" class="remove-btn" onclick="removeCollocation(this)">❌</button>`
-                : ``
-        }
+    collocBlock.innerHTML = `<button type="button" class="remove-btn" onclick="removeCollocation(this)">❌</button>
+
         <label>Content</label><br />
         <input type="text" name="colloc_content" value="${
             colloc.content || ""
@@ -124,12 +116,8 @@ function createSentenceBlock(sent = {}, isNew = true) {
         sentBlock.dataset.sentenceId = sent.id;
     }
 
-    sentBlock.innerHTML = `
-        ${
-            isNew
-                ? `<button type="button" class="remove-btn" onclick="removeSentence(this)">❌</button>`
-                : ``
-        }
+    sentBlock.innerHTML = `<button type="button" class="remove-btn" onclick="removeSentence(this)">❌</button>
+
         <label>Content</label><br />
         <input type="text" name="sentence_content" value="${
             sent.content || ""
@@ -164,20 +152,81 @@ function addSentence(button) {
     sentenceContainer.appendChild(createSentenceBlock({}, true));
 }
 
-// 移除定義區塊（只對新增區塊有效）
 function removeDefinition(button) {
-    button.closest(".definition-block").remove();
+    const defBlock = button.closest(".definition-block");
+    const defId = defBlock.dataset.defId;
+
+    if (defId) {
+        if (!confirm("確認刪除這個定義？")) return;
+        fetch(`http://localhost:8080/api/v1/definitions/${defId}`, {
+            method: "DELETE",
+            headers: {
+                Authorization: getToken(),
+            },
+        })
+            .then((res) => {
+                if (!res.ok) throw new Error("刪除失敗");
+                defBlock.remove();
+            })
+            .catch((err) => {
+                console.error(err);
+                alert("刪除失敗，請稍後再試");
+            });
+    } else {
+        defBlock.remove();
+    }
 }
 
-// 移除搭配詞區塊（只對新增區塊有效）
 function removeCollocation(button) {
-    button.closest(".collocation-block").remove();
+    const collocBlock = button.closest(".collocation-block");
+    const collocId = collocBlock.dataset.collocId;
+
+    if (collocId) {
+        if (!confirm("確認刪除這個搭配詞？")) return;
+        fetch(`http://localhost:8080/api/v1/collocations/${collocId}`, {
+            method: "DELETE",
+            headers: {
+                Authorization: getToken(),
+            },
+        })
+            .then((res) => {
+                if (!res.ok) throw new Error("刪除失敗");
+                collocBlock.remove();
+            })
+            .catch((err) => {
+                console.error(err);
+                alert("刪除失敗，請稍後再試");
+            });
+    } else {
+        collocBlock.remove();
+    }
 }
 
-// 移除例句區塊（只對新增區塊有效）
 function removeSentence(button) {
-    button.closest(".sentence-block").remove();
+    const sentBlock = button.closest(".sentence-block");
+    const sentenceId = sentBlock.dataset.sentenceId;
+
+    if (sentenceId) {
+        if (!confirm("確認刪除這個例句？")) return;
+        fetch(`http://localhost:8080/api/v1/sentences/${sentenceId}`, {
+            method: "DELETE",
+            headers: {
+                Authorization: getToken(),
+            },
+        })
+            .then((res) => {
+                if (!res.ok) throw new Error("刪除失敗");
+                sentBlock.remove();
+            })
+            .catch((err) => {
+                console.error(err);
+                alert("刪除失敗，請稍後再試");
+            });
+    } else {
+        sentBlock.remove();
+    }
 }
+
 
 // 取得所有定義資料（含巢狀搭配詞與例句）
 function getAllDefinitions() {
