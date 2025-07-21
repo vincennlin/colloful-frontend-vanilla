@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>更新單字 - Colloful</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <h1>📝 更新單字</h1>
+
+  <form id="editWordForm">
+    <label for="wordName">單字名稱：</label><br />
+    <input type="text" id="wordName" name="wordName" required /><br /><br />
+
+    <h3>Definitions</h3>
+    <div id="definitionsContainer"></div>
+    <button type="button" id="addDefinitionBtn">＋ 新增定義</button><br /><br />
+
+    <button type="submit">💾 更新單字</button>
+    <button type="button" onclick="location.href='dashboard.html'">返回</button>
+  </form>
+
+  <div id="message" style="margin-top: 20px; color: green"></div>
+
+  <script src="js/auth.js"></script>
+  <script src="js/definition-form.js"></script>
+  <script src="js/update-word.js"></script>
+</body>
+</html>

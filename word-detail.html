@@ -6,11 +6,45 @@
         <link rel="stylesheet" href="css/style.css" />
     </head>
     <body>
-        <h1>📘 Colloful - Word Detail</h1>
+        <h1
+            style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            "
+        >
+            📘 Colloful - Word Detail
+            <div>
+                <button id="editWordBtn" type="button">✏️ Edit</button>
+                <button id="deleteWordBtn" type="button" class="danger-button">
+                    🗑️ Delete
+                </button>
+            </div>
+        </h1>
+
         <div id="wordDetail">Loading...</div>
-        <a href="dashboard.html">← Back to Dashboard</a>
+
+        <h2 style="margin-top: 30px">➕ Add New Definition</h2>
+        <div id="newDefinitionsContainer"></div>
+        <button type="button" onclick="addDefinitionToDetail()">
+            ＋ 新增 Definition
+        </button>
+        <button
+            type="button"
+            id="submitNewDefinitionsBtn"
+            onclick="submitNewDefinitions()"
+            style="display: none"
+        >
+            送出新增定義
+        </button>
+        <input type="hidden" id="wordName" />
+
+        <div id="actions" style="margin-top: 20px">
+            <button id="backBtn" type="button">← Back to Dashboard</button>
+        </div>
 
         <script src="js/auth.js"></script>
+        <script src="js/definition-form.js"></script>
         <script src="js/word-detail.js"></script>
     </body>
 </html>
