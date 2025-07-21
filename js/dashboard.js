@@ -92,7 +92,7 @@ function displayWords(words) {
 
             const niceLabel = {
                 important: "⭐",
-                mistaken: "❌",
+                mistaken: "🙈",
                 review_today: "📅",
             }[key];
 

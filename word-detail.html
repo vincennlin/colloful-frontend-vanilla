@@ -24,11 +24,13 @@
 
         <div id="wordDetail">Loading...</div>
 
+        <div id="reviewCardContainer"></div>
+        
         <h2 style="margin-top: 30px">➕ Add New Definition</h2>
+        
         <div id="newDefinitionsContainer"></div>
-        <button type="button" onclick="addDefinitionToDetail()">
-            ＋ 新增 Definition
-        </button>
+        
+        <button type="button" onclick="addDefinitionToDetail()">＋ 新增 Definition</button>
         <button
             type="button"
             id="submitNewDefinitionsBtn"
@@ -37,8 +39,11 @@
         >
             送出新增定義
         </button>
+        
+        
+        
         <input type="hidden" id="wordName" />
-
+        
         <div id="actions" style="margin-top: 20px">
             <button id="backBtn" type="button">← Back to Dashboard</button>
         </div>

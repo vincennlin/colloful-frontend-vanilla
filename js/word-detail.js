@@ -34,6 +34,7 @@ function fetchWordDetail(id) {
         })
         .then((data) => {
             renderWordDetail(data);
+            renderReviewProgress(data); // 👈 這會畫出 review 區塊
         })
         .catch((err) => {
             console.error("Error fetching word:", err);
@@ -70,8 +71,9 @@ function renderWordDetail(word) {
     wordDiv.classList.add("word-detail-card");
 
     const wordTitle = document.createElement("h3");
-    const markContainer = document.createElement("div");
+    wordTitle.textContent = word.name;
 
+    const markContainer = document.createElement("div");
     markContainer.style.position = "absolute";
     markContainer.style.top = "10px";
     markContainer.style.right = "10px";
@@ -80,7 +82,7 @@ function renderWordDetail(word) {
 
     const emojiMap = {
         important: "⭐",
-        mistaken: "❌",
+        mistaken: "🙈",
         review_today: "📅",
     };
 
@@ -97,7 +99,7 @@ function renderWordDetail(word) {
         checkbox.checked = !!word[key];
         checkbox.style.width = "20px";
         checkbox.style.height = "20px";
-        checkbox.style.marginBottom = "2px";
+        checkbox.style.marginRight = "6px";
 
         checkbox.addEventListener("click", (e) => {
             e.stopPropagation();
@@ -116,11 +118,7 @@ function renderWordDetail(word) {
     wordHeader.appendChild(markContainer);
     wordDiv.appendChild(wordHeader);
 
-    wordTitle.textContent = word.name;
-    wordDiv.appendChild(wordTitle);
-
     word.definitions.forEach((def) => {
-        // 包裝definition與按鈕的容器
         const defContainer = document.createElement("div");
         defContainer.style.display = "flex";
         defContainer.style.alignItems = "center";
@@ -128,14 +126,13 @@ function renderWordDetail(word) {
 
         const defP = document.createElement("p");
         defP.textContent = `📖 ${def.meaning} (${def.part_of_speech})`;
-        defP.style.flexGrow = "1"; // 讓文字撐滿空間
+        defP.style.flexGrow = "1";
 
         const genBtn = document.createElement("button");
         genBtn.textContent = "COLLOFUL!";
         genBtn.style.marginLeft = "12px";
         genBtn.type = "button";
 
-        // 按鈕事件：送 POST 請求
         genBtn.addEventListener("click", async () => {
             try {
                 const originalText = genBtn.textContent;
@@ -158,8 +155,8 @@ function renderWordDetail(word) {
                     throw new Error(`生成失敗，狀態碼: ${res.status}`);
                 }
 
-                alert("COLLFUL! 搭配詞生成成功！");
-                location.reload(); // 重新載入頁面，更新資料
+                alert("COLLOFUL! 搭配詞生成成功！");
+                location.reload();
             } catch (err) {
                 console.error(err);
                 alert("搭配詞生成失敗，請稍後再試");
@@ -193,6 +190,49 @@ function renderWordDetail(word) {
 
     container.appendChild(wordDiv);
     document.getElementById("wordName").value = word.name;
+}
+
+function renderReviewProgress(word) {
+    const reviewBox = document.createElement("div");
+    reviewBox.style.marginTop = "20px";
+    reviewBox.style.border = "1px solid #ccc";
+    reviewBox.style.borderRadius = "8px";
+    reviewBox.style.padding = "12px";
+    reviewBox.style.backgroundColor = "#f9f9f9";
+
+    const title = document.createElement("h3");
+    title.textContent = "📅 複習進度";
+    reviewBox.appendChild(title);
+
+    const infoList = document.createElement("ul");
+    infoList.style.listStyle = "none";
+    infoList.style.padding = "0";
+
+    const addInfoItem = (label, value) => {
+        const li = document.createElement("li");
+        li.innerHTML = `<strong>${label}：</strong> ${value ?? "（尚未紀錄）"}`;
+        infoList.appendChild(li);
+    };
+
+    addInfoItem("目前階段", word.review_level);
+    addInfoItem("間隔天數", word.review_interval);
+    addInfoItem(
+        "上次複習",
+        word.last_reviewed
+            ? new Date(word.last_reviewed).toLocaleString()
+            : null
+    );
+    addInfoItem(
+        "下次複習",
+        word.next_review ? new Date(word.next_review).toLocaleString() : null
+    );
+
+    reviewBox.appendChild(infoList);
+
+    const container = document.getElementById("reviewCardContainer");
+    container.innerHTML = ""; // 清空舊的內容
+    container.appendChild(reviewBox); // 插入複習區塊
+
 }
 
 function setupEditButton(wordId) {
