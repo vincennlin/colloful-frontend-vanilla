@@ -199,14 +199,21 @@ function renderReviewProgress(word) {
     reviewBox.style.borderRadius = "8px";
     reviewBox.style.padding = "12px";
     reviewBox.style.backgroundColor = "#f9f9f9";
+    reviewBox.style.display = "flex";
+    reviewBox.style.justifyContent = "space-between";
+    reviewBox.style.alignItems = "center";
+
+    // 左側：文字資訊
+    const infoSection = document.createElement("div");
 
     const title = document.createElement("h3");
     title.textContent = "📅 複習進度";
-    reviewBox.appendChild(title);
+    infoSection.appendChild(title);
 
     const infoList = document.createElement("ul");
     infoList.style.listStyle = "none";
     infoList.style.padding = "0";
+    infoList.style.margin = "0";
 
     const addInfoItem = (label, value) => {
         const li = document.createElement("li");
@@ -214,7 +221,7 @@ function renderReviewProgress(word) {
         infoList.appendChild(li);
     };
 
-    addInfoItem("目前階段", word.review_level);
+    addInfoItem("複習次數", word.review_level);
     addInfoItem("間隔天數", word.review_interval);
     addInfoItem(
         "上次複習",
@@ -227,12 +234,57 @@ function renderReviewProgress(word) {
         word.next_review ? new Date(word.next_review).toLocaleString() : null
     );
 
-    reviewBox.appendChild(infoList);
+    infoSection.appendChild(infoList);
+
+    // 右側：按鈕區塊
+    const buttonSection = document.createElement("div");
+    buttonSection.style.display = "flex";
+    buttonSection.style.gap = "10px";
+
+    const options = ["AGAIN", "HARD", "GOOD", "EASY"];
+    options.forEach((option) => {
+        const button = document.createElement("button");
+        button.textContent = option;
+        button.style.padding = "16px 30px";
+        button.style.fontSize = "20px";
+        button.style.cursor = "pointer";
+        button.style.borderRadius = "8px";
+        button.style.backgroundColor = "#007bff";
+
+        button.addEventListener("click", () => {
+            fetch(`http://localhost:8080/api/v1/words/${word.id}/review`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: getToken(),
+                },
+                body: JSON.stringify({
+                    review_option: option,
+                }),
+            })
+                .then((res) => {
+                    if (!res.ok) throw new Error("Review failed");
+                    return res.json();
+                })
+                .then((updatedWord) => {
+                    // ✅ 成功送出後重新渲染複習進度
+                    renderReviewProgress(updatedWord);
+                })
+                .catch((err) => {
+                    alert("送出複習結果失敗：" + err.message);
+                });
+        });
+
+        buttonSection.appendChild(button);
+    });
+
+    // 合併左側與右側
+    reviewBox.appendChild(infoSection);
+    reviewBox.appendChild(buttonSection);
 
     const container = document.getElementById("reviewCardContainer");
-    container.innerHTML = ""; // 清空舊的內容
-    container.appendChild(reviewBox); // 插入複習區塊
-
+    container.innerHTML = ""; // 清空舊內容
+    container.appendChild(reviewBox);
 }
 
 function setupEditButton(wordId) {
