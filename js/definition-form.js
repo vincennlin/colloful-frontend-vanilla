@@ -178,3 +178,56 @@ function removeCollocation(button) {
 function removeSentence(button) {
     button.closest(".sentence-block").remove();
 }
+
+// 取得所有定義資料（含巢狀搭配詞與例句）
+function getAllDefinitions() {
+    const definitionBlocks = document.querySelectorAll(".definition-block");
+    const definitions = [];
+
+    definitionBlocks.forEach((defBlock) => {
+        const defId = defBlock.dataset.defId ? parseInt(defBlock.dataset.defId) : null;
+        const meaning = defBlock.querySelector(".definition-meaning").value.trim();
+        const partOfSpeech = defBlock.querySelector(".definition-pos").value;
+
+        const collocationBlocks = defBlock.querySelectorAll(".collocation-block");
+        const collocations = [];
+
+        collocationBlocks.forEach((collocBlock) => {
+            const collocId = collocBlock.dataset.collocId ? parseInt(collocBlock.dataset.collocId) : null;
+            const content = collocBlock.querySelector("input[name='colloc_content']").value.trim();
+            const meaning = collocBlock.querySelector("input[name='colloc_meaning']").value.trim();
+
+            const sentenceBlocks = collocBlock.querySelectorAll(".sentence-block");
+            const sentences = [];
+
+            sentenceBlocks.forEach((sentBlock) => {
+                const sentenceId = sentBlock.dataset.sentenceId ? parseInt(sentBlock.dataset.sentenceId) : null;
+                const content = sentBlock.querySelector("input[name='sentence_content']").value.trim();
+                const translation = sentBlock.querySelector("input[name='sentence_translation']").value.trim();
+
+                sentences.push({
+                    id: sentenceId,
+                    content,
+                    translation,
+                });
+            });
+
+            collocations.push({
+                id: collocId,
+                content,
+                meaning,
+                sentences,
+            });
+        });
+
+        definitions.push({
+            id: defId,
+            meaning,
+            part_of_speech: partOfSpeech,
+            collocations,
+        });
+    });
+
+    return definitions;
+}
+
