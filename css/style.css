@@ -93,12 +93,12 @@ h3 {
 .word-card {
     width: 100%;
     box-sizing: border-box;
-    border: 1.5px solid #cbd5e1; /* 淺藍灰邊框 */
+    border: 1.5px solid #cbd5e1;
     border-radius: 12px;
     padding: 16px 20px;
     margin: 10px 0;
-    height: 250px; /* 固定高度 */
-    overflow: hidden;
+    height: auto; /* 讓高度自適應內容 */
+    overflow: visible; /* 允許內容溢出顯示 */
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -109,14 +109,14 @@ h3 {
 }
 
 .word-card:hover {
-    background-color: #ebf4ff; /* 淺藍背景 */
+    background-color: #ebf4ff;
     box-shadow: 0 4px 12px rgb(59 130 246 / 0.3);
 }
 
 .word-card h3 {
     margin: 0 0 12px 0;
     font-size: 26px;
-    color: #1e293b; /* 深藍灰 */
+    color: #1e293b;
     font-weight: 600;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -127,11 +127,12 @@ h3 {
     margin: 6px 0;
     font-size: 15px;
     line-height: 1.3;
-    color: #475569; /* 中灰 */
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    color: #475569;
+    white-space: normal;      /* ✅ 允許換行 */
+    overflow: visible;        /* ✅ 顯示全部內容 */
+    text-overflow: unset;     /* ✅ 不再用省略號 */
 }
+
 
 /* --- 單字詳情卡 (word-detail-card) --- */
 .word-detail-card {
@@ -218,6 +219,18 @@ h3 {
     text-align: center;
 }
 
+.collocation-text {
+    margin-left: 8px;
+    margin-right: 8px;
+    margin-bottom: 4px;
+    padding: 4px 6px;
+    border-radius: 6px;
+    background-color: #f1f5f9;
+    color: #334155;
+    white-space: normal;
+    text-overflow: unset;
+}
+
 /* 區塊樣式：definition, collocation, sentence */
 .definition-block,
 .collocation-block,
@@ -287,4 +300,33 @@ h3 {
 
 .remove-btn:hover {
     background-color: #be123c;
+}
+
+.has-tooltip {
+    position: relative;
+    cursor: help;
+}
+
+.has-tooltip::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    transform: translateY(-6px);
+    background-color: rgba(0, 0, 0, 0.75);
+    color: #fff;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 14px;
+    white-space: normal;
+    width: max-content;
+    max-width: 250px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+    z-index: 999;
+}
+
+.has-tooltip:hover::after {
+    opacity: 1;
 }

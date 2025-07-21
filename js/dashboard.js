@@ -49,12 +49,28 @@ function displayWords(words) {
 
         word.definitions.forEach((def) => {
             const posP = document.createElement("p");
-            posP.textContent = `📖 (${def.part_of_speech})`;
+
+            const baseText = `📖 (${def.part_of_speech})`;
+
+            posP.textContent = baseText;
+
+            const fullText = `${baseText} ${def.meaning}`;
+            posP.dataset.base = baseText;
+            posP.dataset.full = fullText;
+
+            wordDiv.addEventListener("mouseenter", () => {
+                posP.textContent = posP.dataset.full;
+            });
+            wordDiv.addEventListener("mouseleave", () => {
+                posP.textContent = posP.dataset.base;
+            });
+
             wordDiv.appendChild(posP);
 
             def.collocations.forEach((colloc) => {
                 const collocP = document.createElement("p");
                 collocP.textContent = `🔗 ${colloc.content}`;
+                collocP.classList.add("collocation-text");
                 wordDiv.appendChild(collocP);
             });
         });
@@ -62,6 +78,7 @@ function displayWords(words) {
         container.appendChild(wordDiv);
     });
 }
+
 
 function updatePaginationControls() {
     document.getElementById(
