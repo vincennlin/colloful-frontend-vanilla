@@ -38,23 +38,78 @@ function displayWords(words) {
     words.forEach((word) => {
         const wordDiv = document.createElement("div");
         wordDiv.classList.add("word-card");
+        wordDiv.style.position = "relative"; // 為右上角標記定位
 
-        wordDiv.addEventListener("click", () => {
-            window.location.href = `word-detail.html?id=${word.id}`;
+        // 點擊跳轉 detail 頁面（避免點到 checkbox 也觸發）
+        wordDiv.addEventListener("click", (e) => {
+            if (e.target.type !== "checkbox") {
+                window.location.href = `word-detail.html?id=${word.id}`;
+            }
         });
 
+        // 👉 標記區塊：important, mistaken, review_today
+        const markContainer = document.createElement("div");
+        markContainer.style.position = "absolute";
+        markContainer.style.top = "10px";
+        markContainer.style.right = "10px";
+        markContainer.style.display = "flex";
+        markContainer.style.gap = "4px";
+
+        const marks = [
+            { key: "important", label: "⭐" },
+            { key: "mistaken", label: "❗" },
+            { key: "review_today", label: "🔁" }
+        ];
+
+        marks.forEach(({ key, label }) => {
+            const checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.title = key;
+            checkbox.checked = word[key];
+
+            checkbox.addEventListener("change", async () => {
+                try {
+                    const res = await fetch(`${API_BASE}/words/${word.id}/mark`, {
+                        method: "PATCH",
+                        headers: {
+                            "Content-Type": "application/json",
+                            Authorization: getToken(),
+                        },
+                        body: JSON.stringify({
+                            [key]: checkbox.checked,
+                        }),
+                    });
+
+                    if (!res.ok) throw new Error("更新失敗");
+                } catch (err) {
+                    alert(`更新 ${key} 失敗：${err.message}`);
+                    checkbox.checked = !checkbox.checked; // 還原
+                }
+            });
+
+            const labelEl = document.createElement("label");
+            labelEl.appendChild(checkbox);
+            labelEl.appendChild(document.createTextNode(label));
+            labelEl.style.cursor = "pointer";
+            labelEl.style.fontSize = "14px";
+
+            markContainer.appendChild(labelEl);
+        });
+
+        wordDiv.appendChild(markContainer);
+
+        // 單字名稱
         const wordTitle = document.createElement("h3");
         wordTitle.textContent = word.name;
         wordDiv.appendChild(wordTitle);
 
+        // 定義 + 搭配詞
         word.definitions.forEach((def) => {
             const posP = document.createElement("p");
-
             const baseText = `📖 (${def.part_of_speech})`;
+            const fullText = `${baseText} ${def.meaning}`;
 
             posP.textContent = baseText;
-
-            const fullText = `${baseText} ${def.meaning}`;
             posP.dataset.base = baseText;
             posP.dataset.full = fullText;
 
