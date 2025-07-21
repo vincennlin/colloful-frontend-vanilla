@@ -64,13 +64,12 @@ function displayWords(words) {
             checkbox.checked = !!word[key];
             checkbox.style.width = "20px";
             checkbox.style.height = "20px";
-            checkbox.style.margin = "0";  // margin 清除，改用 CSS gap 控制間距
+            checkbox.style.margin = "0"; // margin 清除，改用 CSS gap 控制間距
             checkbox.style.transform = ""; // 不要用 scale
-            
 
             checkbox.addEventListener("click", async (e) => {
                 e.stopPropagation(); // 不觸發整卡片的跳轉
-                const updated = { ...word, [key]: checkbox.checked };
+                const updated = { [key]: checkbox.checked };
 
                 try {
                     const res = await fetch(
@@ -129,6 +128,52 @@ function displayWords(words) {
                 collocP.classList.add("collocation-text");
                 wordDiv.appendChild(collocP);
             });
+        });
+
+        // 複習按鈕區塊
+        const reviewSection = document.createElement("div");
+        reviewSection.classList.add("review-buttons");
+        reviewSection.style.display = "none"; // ← 一開始先隱藏
+
+        const reviewOptions = ["AGAIN", "HARD", "GOOD", "EASY"];
+        reviewOptions.forEach((option) => {
+            const btn = document.createElement("button");
+            btn.textContent = option;
+            btn.classList.add("review-btn");
+
+            btn.addEventListener("click", async (e) => {
+                e.stopPropagation();
+
+                try {
+                    const res = await fetch(
+                        `${API_BASE}/words/${word.id}/review`,
+                        {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                                Authorization: getToken(),
+                            },
+                            body: JSON.stringify({ review_option: option }),
+                        }
+                    );
+
+                    if (!res.ok) throw new Error("Review failed");
+                    alert(`複習「${word.name}」成功 (${option})`);
+                } catch (err) {
+                    alert("送出複習結果失敗：" + err.message);
+                }
+            });
+
+            reviewSection.appendChild(btn);
+        });
+
+        wordDiv.appendChild(reviewSection);
+
+        wordDiv.addEventListener("mouseenter", () => {
+            reviewSection.style.display = "flex"; // 或 "block"
+        });
+        wordDiv.addEventListener("mouseleave", () => {
+            reviewSection.style.display = "none";
         });
 
         container.appendChild(wordDiv);

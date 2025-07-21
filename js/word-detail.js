@@ -239,7 +239,13 @@ function renderReviewProgress(word) {
     // 右側：按鈕區塊
     const buttonSection = document.createElement("div");
     buttonSection.style.display = "flex";
+    buttonSection.style.flexDirection = "column";
+    buttonSection.style.alignItems = "flex-end";
     buttonSection.style.gap = "10px";
+
+    const row1 = document.createElement("div");
+    row1.style.display = "flex";
+    row1.style.gap = "10px";
 
     const options = ["AGAIN", "HARD", "GOOD", "EASY"];
     options.forEach((option) => {
@@ -250,6 +256,8 @@ function renderReviewProgress(word) {
         button.style.cursor = "pointer";
         button.style.borderRadius = "8px";
         button.style.backgroundColor = "#007bff";
+        button.style.color = "#fff";
+        button.style.border = "none";
 
         button.addEventListener("click", () => {
             fetch(`http://localhost:8080/api/v1/words/${word.id}/review`, {
@@ -267,7 +275,6 @@ function renderReviewProgress(word) {
                     return res.json();
                 })
                 .then((updatedWord) => {
-                    // ✅ 成功送出後重新渲染複習進度
                     renderReviewProgress(updatedWord);
                 })
                 .catch((err) => {
@@ -275,17 +282,52 @@ function renderReviewProgress(word) {
                 });
         });
 
-        buttonSection.appendChild(button);
+        row1.appendChild(button);
     });
 
-    // 合併左側與右側
+    const revertButton = document.createElement("button");
+    revertButton.textContent = "REVERT";
+    revertButton.style.padding = "10px 20px";
+    revertButton.style.fontSize = "16px";
+    revertButton.style.cursor = word.last_reviewed ? "pointer" : "not-allowed";
+    revertButton.style.borderRadius = "6px";
+    revertButton.style.backgroundColor = word.last_reviewed ? "#dc3545" : "#ccc";
+    revertButton.style.color = "#fff";
+    revertButton.style.border = "none";
+
+    // 根據是否有 last_reviewed 來決定是否綁定事件
+    if (word.last_reviewed) {
+        revertButton.addEventListener("click", () => {
+            fetch(`http://localhost:8080/api/v1/words/${word.id}/review/undo`, {
+                method: "POST",
+                headers: {
+                    Authorization: getToken(),
+                },
+            })
+                .then((res) => {
+                    if (!res.ok) throw new Error("Revert failed");
+                    return res.json();
+                })
+                .then((updatedWord) => {
+                    renderReviewProgress(updatedWord);
+                })
+                .catch((err) => {
+                    alert("複習復原失敗：" + err.message);
+                });
+        });
+    }
+
+    buttonSection.appendChild(row1);
+    buttonSection.appendChild(revertButton);
+
     reviewBox.appendChild(infoSection);
     reviewBox.appendChild(buttonSection);
 
     const container = document.getElementById("reviewCardContainer");
-    container.innerHTML = ""; // 清空舊內容
+    container.innerHTML = "";
     container.appendChild(reviewBox);
 }
+
 
 function setupEditButton(wordId) {
     const editBtn = document.getElementById("editWordBtn");
