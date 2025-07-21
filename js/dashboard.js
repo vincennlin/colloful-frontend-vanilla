@@ -16,7 +16,7 @@ function fetchWords(page = 1) {
     fetch(`${API_BASE}/words?pageNo=${page - 1}&pageSize=${pageSize}`, {
         method: "GET",
         headers: {
-            Authorization: "Bearer " + token,
+            Authorization: getToken(),
         },
     })
         .then((res) => res.json())
@@ -38,78 +38,79 @@ function displayWords(words) {
     words.forEach((word) => {
         const wordDiv = document.createElement("div");
         wordDiv.classList.add("word-card");
-        wordDiv.style.position = "relative"; // 為右上角標記定位
 
-        // 點擊跳轉 detail 頁面（避免點到 checkbox 也觸發）
+        // 點擊跳轉
         wordDiv.addEventListener("click", (e) => {
-            if (e.target.type !== "checkbox") {
+            if (e.target.tagName.toLowerCase() !== "input") {
                 window.location.href = `word-detail.html?id=${word.id}`;
             }
         });
 
-        // 👉 標記區塊：important, mistaken, review_today
-        const markContainer = document.createElement("div");
-        markContainer.style.position = "absolute";
-        markContainer.style.top = "10px";
-        markContainer.style.right = "10px";
-        markContainer.style.display = "flex";
-        markContainer.style.gap = "4px";
-
-        const marks = [
-            { key: "important", label: "⭐" },
-            { key: "mistaken", label: "❗" },
-            { key: "review_today", label: "🔁" }
-        ];
-
-        marks.forEach(({ key, label }) => {
-            const checkbox = document.createElement("input");
-            checkbox.type = "checkbox";
-            checkbox.title = key;
-            checkbox.checked = word[key];
-
-            checkbox.addEventListener("change", async () => {
-                try {
-                    const res = await fetch(`${API_BASE}/words/${word.id}/mark`, {
-                        method: "PATCH",
-                        headers: {
-                            "Content-Type": "application/json",
-                            Authorization: getToken(),
-                        },
-                        body: JSON.stringify({
-                            [key]: checkbox.checked,
-                        }),
-                    });
-
-                    if (!res.ok) throw new Error("更新失敗");
-                } catch (err) {
-                    alert(`更新 ${key} 失敗：${err.message}`);
-                    checkbox.checked = !checkbox.checked; // 還原
-                }
-            });
-
-            const labelEl = document.createElement("label");
-            labelEl.appendChild(checkbox);
-            labelEl.appendChild(document.createTextNode(label));
-            labelEl.style.cursor = "pointer";
-            labelEl.style.fontSize = "14px";
-
-            markContainer.appendChild(labelEl);
-        });
-
-        wordDiv.appendChild(markContainer);
-
-        // 單字名稱
+        // Title
         const wordTitle = document.createElement("h3");
         wordTitle.textContent = word.name;
         wordDiv.appendChild(wordTitle);
 
-        // 定義 + 搭配詞
+        // checkbox group container
+        const markContainer = document.createElement("div");
+        markContainer.classList.add("mark-container");
+
+        ["important", "mistaken", "review_today"].forEach((key) => {
+            const label = document.createElement("label");
+            label.classList.add("checkbox-label");
+
+            const checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.checked = !!word[key];
+            checkbox.style.width = "20px";
+            checkbox.style.height = "20px";
+            checkbox.style.margin = "0";  // margin 清除，改用 CSS gap 控制間距
+            checkbox.style.transform = ""; // 不要用 scale
+            
+
+            checkbox.addEventListener("click", async (e) => {
+                e.stopPropagation(); // 不觸發整卡片的跳轉
+                const updated = { ...word, [key]: checkbox.checked };
+
+                try {
+                    const res = await fetch(
+                        `${API_BASE}/words/${word.id}/mark`,
+                        {
+                            method: "PATCH",
+                            headers: {
+                                "Content-Type": "application/json",
+                                Authorization: getToken(),
+                            },
+                            body: JSON.stringify(updated),
+                        }
+                    );
+                    if (!res.ok) throw new Error("Update failed");
+                } catch (err) {
+                    alert("Failed to update word mark: " + err.message);
+                }
+            });
+
+            const niceLabel = {
+                important: "⭐",
+                mistaken: "❌",
+                review_today: "📅",
+            }[key];
+
+            label.appendChild(checkbox);
+            label.append(niceLabel);
+            markContainer.appendChild(label);
+        });
+
+        wordDiv.appendChild(markContainer);
+
+        // 定義與搭配詞
         word.definitions.forEach((def) => {
             const posP = document.createElement("p");
-            const baseText = `📖 (${def.part_of_speech})`;
-            const fullText = `${baseText} ${def.meaning}`;
 
+            const baseText = `📖 (${def.part_of_speech})`;
             posP.textContent = baseText;
+
+            const fullText = `${baseText} ${def.meaning}`;
             posP.dataset.base = baseText;
             posP.dataset.full = fullText;
 
@@ -133,7 +134,6 @@ function displayWords(words) {
         container.appendChild(wordDiv);
     });
 }
-
 
 function updatePaginationControls() {
     document.getElementById(

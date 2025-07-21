@@ -42,6 +42,26 @@ function fetchWordDetail(id) {
         });
 }
 
+function updateMark(wordId, field, value) {
+    fetch(`${API_BASE}/words/${wordId}/mark`, {
+        method: "PATCH",
+        headers: {
+            Authorization: getToken(),
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            [field]: value,
+        }),
+    })
+        .then((res) => {
+            if (!res.ok) throw new Error("更新標記失敗");
+        })
+        .catch((err) => {
+            console.error("標記更新失敗：", err);
+            alert("更新標記時發生錯誤");
+        });
+}
+
 function renderWordDetail(word) {
     const container = document.getElementById("wordDetail");
     container.innerHTML = "";
@@ -50,6 +70,52 @@ function renderWordDetail(word) {
     wordDiv.classList.add("word-detail-card");
 
     const wordTitle = document.createElement("h3");
+    const markContainer = document.createElement("div");
+
+    markContainer.style.position = "absolute";
+    markContainer.style.top = "10px";
+    markContainer.style.right = "10px";
+    markContainer.style.display = "flex";
+    markContainer.style.gap = "12px";
+
+    const emojiMap = {
+        important: "⭐",
+        mistaken: "❌",
+        review_today: "📅",
+    };
+
+    Object.entries(emojiMap).forEach(([key, emoji]) => {
+        const label = document.createElement("label");
+        label.style.display = "flex";
+        label.style.flexDirection = "row";
+        label.style.alignItems = "center";
+        label.style.fontSize = "20px";
+        label.style.cursor = "pointer";
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.checked = !!word[key];
+        checkbox.style.width = "20px";
+        checkbox.style.height = "20px";
+        checkbox.style.marginBottom = "2px";
+
+        checkbox.addEventListener("click", (e) => {
+            e.stopPropagation();
+            updateMark(word.id, key, checkbox.checked);
+        });
+
+        label.appendChild(checkbox);
+        label.append(emoji);
+        markContainer.appendChild(label);
+    });
+
+    // ✅ 包裝 word title + 標記
+    const wordHeader = document.createElement("div");
+    wordHeader.style.position = "relative";
+    wordHeader.appendChild(wordTitle);
+    wordHeader.appendChild(markContainer);
+    wordDiv.appendChild(wordHeader);
+
     wordTitle.textContent = word.name;
     wordDiv.appendChild(wordTitle);
 
