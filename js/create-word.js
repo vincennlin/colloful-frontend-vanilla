@@ -14,6 +14,21 @@ document.addEventListener("DOMContentLoaded", () => {
     if (collofulBtn) {
         collofulBtn.addEventListener("click", handleCollofulSubmit);
     }
+
+    // 加入康橋字典連結邏輯
+    const wordInput = document.getElementById("wordName");
+    const kangxuanLink = document.getElementById("linkToKangxuan");
+
+    wordInput.addEventListener("input", () => {
+        const word = wordInput.value.trim();
+        if (word) {
+            kangxuanLink.href = `https://www.wordsmyth.net/?level=3&ent=${encodeURIComponent(
+                word
+            )}`;
+        } else {
+            kangxuanLink.href = "#";
+        }
+    });
 });
 
 function handleCreateSubmit(e) {
@@ -95,3 +110,42 @@ function handleCollofulSubmit() {
             button.style.cursor = "";
         });
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+    document
+        .getElementById("createWordForm")
+        .addEventListener("submit", handleCreateSubmit);
+
+    const addDefinitionBtn = document.getElementById("addDefinitionBtn");
+    if (addDefinitionBtn) {
+        addDefinitionBtn.addEventListener("click", () => {
+            addDefinition();
+        });
+    }
+
+    const collofulBtn = document.getElementById("collofulBtn");
+    if (collofulBtn) {
+        collofulBtn.addEventListener("click", handleCollofulSubmit);
+    }
+
+    // 加入康橋字典連結邏輯
+    const wordInput = document.getElementById("wordName");
+    const cambridgeLink = document.getElementById("linkToCambridge");
+
+    wordInput.addEventListener("input", () => {
+        const word = wordInput.value.trim();
+        if (word) {
+            cambridgeLink.href = `https://dictionary.cambridge.org/dictionary/english-chinese-traditional/${encodeURIComponent(
+                word
+            )}`;
+            cambridgeLink.style.color = "#0d6efd";
+            cambridgeLink.style.pointerEvents = "auto";
+            cambridgeLink.style.cursor = "pointer";
+        } else {
+            cambridgeLink.href = "#";
+            cambridgeLink.style.color = "#ccc";
+            cambridgeLink.style.pointerEvents = "none";
+            cambridgeLink.style.cursor = "not-allowed";
+        }
+    });
+});

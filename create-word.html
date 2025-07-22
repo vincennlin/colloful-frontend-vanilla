@@ -18,15 +18,38 @@
                     max-width: 100%;
                 "
             >
-                <div style="flex: 1; min-width: 300px">
-                    <label for="wordName">Word Name </label><br />
+                <div style="flex: 1; min-width: 300px; position: relative">
+                    <label
+                        for="wordName"
+                        style="
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+                        "
+                    >
+                        Word Name
+                        <a
+                            id="linkToCambridge"
+                            href="#"
+                            target="_blank"
+                            style="
+                                font-size: 0.85rem;
+                                color: #ccc;
+                                text-decoration: none;
+                                pointer-events: none;
+                                cursor: not-allowed;
+                            "
+                        >
+                            📔 Cambridge Dictionary
+                        </a>
+                    </label>
                     <input
                         type="text"
                         id="wordName"
                         name="wordName"
                         placeholder="輸入單字…"
                         required
-                    /><br />
+                    />
                 </div>
 
                 <div style="flex: 1; min-width: 300px">
