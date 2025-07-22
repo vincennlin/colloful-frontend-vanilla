@@ -34,8 +34,9 @@ function fetchWordDetail(id) {
         })
         .then((data) => {
             renderWordDetail(data);
-            renderReviewProgress(data); // 👈 這會畫出 review 區塊
-        })
+            renderReviewProgress(data);
+            insertCambridgeLink(data.name); // 👈 新增康橋連結
+        })        
         .catch((err) => {
             console.error("Error fetching word:", err);
             document.getElementById("wordDetail").textContent =
@@ -190,6 +191,29 @@ function renderWordDetail(word) {
     container.appendChild(wordDiv);
     document.getElementById("wordName").value = word.name;
 }
+
+function insertCambridgeLink(wordName) {
+    const topRightButtons = document.getElementById("top-right-buttons");
+    if (!topRightButtons) return;
+
+    const cambridgeLink = document.createElement("a");
+    cambridgeLink.href = `https://dictionary.cambridge.org/dictionary/english-chinese-traditional/${encodeURIComponent(wordName)}`;
+    cambridgeLink.target = "_blank";
+    cambridgeLink.textContent = "🔍 Cambridge Dictionary";
+    cambridgeLink.style.color = "#007BFF";
+    cambridgeLink.className = "button";
+    cambridgeLink.style.marginRight = "20px";
+
+
+    // 插在 Edit 左邊（即 Edit 按鈕前）
+    const editBtn = document.getElementById("editWordBtn");
+    if (editBtn) {
+        topRightButtons.insertBefore(cambridgeLink, editBtn);
+    } else {
+        topRightButtons.appendChild(cambridgeLink);
+    }
+}
+
 
 function renderReviewProgress(word) {
     const reviewBox = document.createElement("div");
