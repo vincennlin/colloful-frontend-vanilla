@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Search - Colloful</title>
+        <link rel="stylesheet" href="css/style.css" />
+    </head>
+    <body>
+        <h1
+            style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            "
+        >
+            🔍 Colloful - Search Result
+            <div>
+                <button onclick="location.href='dashboard.html'">
+                    🏠 Back
+                </button>
+                <button onclick="logout()">Logout</button>
+            </div>
+        </h1>
+
+        <div id="wordList">Searching...</div>
+        <div id="pagination" style="margin-top: 20px; text-align: center">
+            <button id="prevPageBtn">← Prev</button>
+            <span id="pageInfo">Page 1</span>
+            <button id="nextPageBtn">Next →</button>
+        </div>
+
+        <script src="js/auth.js"></script>
+        <script type="module" src="js/search-word.js"></script>
+    </body>
+</html>

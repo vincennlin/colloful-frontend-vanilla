@@ -4,14 +4,30 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
-    const isReviewPage = window.location.pathname.includes("review.html");
+    const urlPath = window.location.pathname;
+    const urlParams = new URLSearchParams(window.location.search);
+    const searchName = urlParams.get("name");
+    const isReviewPage = urlPath.includes("review.html");
+    const isSearchPage = urlPath.includes("search-word.html");
+
     const pageSize = 9;
     let currentPage = 1;
     let totalPages = 1;
 
     const fetchFn = (pageNo) => {
-        const base = isReviewPage ? `${API_BASE}/words/review` : `${API_BASE}/words`;
-        const url = `${base}?pageNo=${pageNo - 1}&pageSize=${pageSize}`;
+        let url;
+        if (isReviewPage) {
+            url = `${API_BASE}/words/review?pageNo=${
+                pageNo - 1
+            }&pageSize=${pageSize}`;
+        } else if (isSearchPage && searchName) {
+            url = `${API_BASE}/words/search?name=${encodeURIComponent(
+                searchName
+            )}&pageNo=${pageNo - 1}&pageSize=${pageSize}`;
+        } else {
+            url = `${API_BASE}/words?pageNo=${pageNo - 1}&pageSize=${pageSize}`;
+        }
+
         return fetch(url, {
             headers: {
                 Authorization: getToken(),
@@ -43,7 +59,11 @@ document.addEventListener("DOMContentLoaded", () => {
             wordDiv.classList.add("word-card");
 
             wordDiv.addEventListener("click", (e) => {
-                if (!["input", "button"].includes(e.target.tagName.toLowerCase())) {
+                if (
+                    !["input", "button"].includes(
+                        e.target.tagName.toLowerCase()
+                    )
+                ) {
                     window.location.href = `word-detail.html?id=${word.id}`;
                 }
             });
@@ -71,14 +91,17 @@ document.addEventListener("DOMContentLoaded", () => {
                     e.stopPropagation();
                     const updated = { [key]: checkbox.checked };
                     try {
-                        const res = await fetch(`${API_BASE}/words/${word.id}/mark`, {
-                            method: "PATCH",
-                            headers: {
-                                "Content-Type": "application/json",
-                                Authorization: getToken(),
-                            },
-                            body: JSON.stringify(updated),
-                        });
+                        const res = await fetch(
+                            `${API_BASE}/words/${word.id}/mark`,
+                            {
+                                method: "PATCH",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                    Authorization: getToken(),
+                                },
+                                body: JSON.stringify(updated),
+                            }
+                        );
                         if (!res.ok) throw new Error("Update failed");
                     } catch (err) {
                         alert("Failed to update word mark: " + err.message);
@@ -177,9 +200,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function updatePaginationControls() {
-        document.getElementById("pageInfo").textContent = `Page ${currentPage} of ${totalPages}`;
+        document.getElementById(
+            "pageInfo"
+        ).textContent = `Page ${currentPage} of ${totalPages}`;
         document.getElementById("prevPageBtn").disabled = currentPage === 1;
-        document.getElementById("nextPageBtn").disabled = currentPage === totalPages;
+        document.getElementById("nextPageBtn").disabled =
+            currentPage === totalPages;
 
         document.getElementById("prevPageBtn").onclick = () => {
             if (currentPage > 1) fetchAndDisplay(currentPage - 1);

@@ -14,7 +14,17 @@
             "
         >
             📚 Colloful - Word List
-            <div>
+
+            <div style="display: flex; gap: 8px; align-items: center">
+                <form id="searchForm" style="display: flex; gap: 4px">
+                    <input
+                        type="text"
+                        id="searchInput"
+                        placeholder="Search word..."
+                        style="padding: 4px"
+                    />
+                    <button type="submit">🔍</button>
+                </form>
                 <button onclick="location.href='review.html'">🔁 Review</button>
                 <button onclick="location.href='create-word.html'">
                     ➕ Add
