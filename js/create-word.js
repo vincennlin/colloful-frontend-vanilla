@@ -34,13 +34,17 @@ function handleCreateSubmit(e) {
             if (!res.ok) throw new Error("Failed to create word");
             return res.json();
         })
-        .then(() => {
-            document.getElementById("message").textContent =
-                "✅ 單字新增成功！";
-            document.getElementById("message").style.color = "green";
+        .then((data) => {
+            const wordId = data.id;
+            const wordLink = `<a href="word-detail.html?id=${wordId}" target="_blank" style="color: #007BFF; font-weight: bold;">🔍 查看單字</a>`;
+        
+            const messageEl = document.getElementById("message");
+            messageEl.innerHTML = `✅ 單字新增成功！ ${wordLink}`;
+            messageEl.style.color = "green";
+        
             document.getElementById("createWordForm").reset();
             document.getElementById("definitionsContainer").innerHTML = "";
-        })
+        })        
         .catch((err) => {
             console.error(err);
             document.getElementById("message").textContent =
