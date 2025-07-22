@@ -87,6 +87,22 @@ h3 {
 #message {
     font-weight: bold;
 }
+
+.form-row {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    width: 100%;
+    max-width: 100%;
+}
+
+.form-half {
+    flex: 1;
+    min-width: 300px;
+}
+
+
 /* 單字卡片整體風格 */
 /* --- 單字卡片 (word-card) --- */
 .word-card {

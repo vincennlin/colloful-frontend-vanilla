@@ -6,16 +6,47 @@
         <link rel="stylesheet" href="css/style.css" />
     </head>
     <body>
-        <h1>➕ 新增單字</h1>
+        <h1>➕ Create New Word</h1>
 
         <form id="createWordForm">
-            <label for="wordName">單字名稱：</label><br />
-            <input
-                type="text"
-                id="wordName"
-                name="wordName"
-                required
-            /><br /><br />
+            <div
+                style="
+                    display: flex;
+                    gap: 20px;
+                    align-items: flex-start;
+                    flex-wrap: wrap;
+                    max-width: 100%;
+                "
+            >
+                <div style="flex: 1; min-width: 300px">
+                    <label for="wordName">Word Name </label><br />
+                    <input
+                        type="text"
+                        id="wordName"
+                        name="wordName"
+                        placeholder="輸入單字…"
+                        required
+                    /><br />
+                </div>
+
+                <div style="flex: 1; min-width: 300px">
+                    <label for="collofulInput">Create Word Collofully! </label
+                    ><br />
+                    <textarea
+                        id="collofulInput"
+                        rows="8"
+                        placeholder="貼上單字段落，如康橋字典定義…"
+                        style="width: 100%"
+                    ></textarea>
+                    <button
+                        type="button"
+                        id="collofulBtn"
+                        style="margin-top: 8px"
+                    >
+                        COLLOFUL!
+                    </button>
+                </div>
+            </div>
 
             <h3>Definitions</h3>
             <div id="definitionsContainer"></div>
