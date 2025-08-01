@@ -121,6 +121,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
             wordDiv.appendChild(markContainer);
 
+            let isInside = false;
+            let hasMoved = false;
+
             word.definitions.forEach((def) => {
                 const posP = document.createElement("p");
 
@@ -132,10 +135,23 @@ document.addEventListener("DOMContentLoaded", () => {
                 posP.dataset.full = fullText;
 
                 wordDiv.addEventListener("mouseenter", () => {
-                    posP.textContent = posP.dataset.full;
+                    isInside = true;
+                    if (hasMoved) {
+                        posP.textContent = posP.dataset.full;
+                    }
                 });
+
                 wordDiv.addEventListener("mouseleave", () => {
+                    isInside = false;
+                    hasMoved = false;
                     posP.textContent = posP.dataset.base;
+                });
+
+                wordDiv.addEventListener("mousemove", () => {
+                    if (isInside && !hasMoved) {
+                        hasMoved = true;
+                        posP.textContent = posP.dataset.full;
+                    }
                 });
 
                 wordDiv.appendChild(posP);
