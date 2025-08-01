@@ -121,6 +121,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
             wordDiv.appendChild(markContainer);
 
+            let hasHoveredInside = false;
+
             word.definitions.forEach((def) => {
                 const posP = document.createElement("p");
 
@@ -131,13 +133,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 posP.dataset.base = baseText;
                 posP.dataset.full = fullText;
 
-                wordDiv.addEventListener("mouseenter", () => {
-                    posP.textContent = posP.dataset.full;
-                });
-                wordDiv.addEventListener("mouseleave", () => {
-                    posP.textContent = posP.dataset.base;
-                });
-
+                // 每個 definition 的文字都 append 到 wordDiv
                 wordDiv.appendChild(posP);
 
                 def.collocations.forEach((colloc) => {
@@ -147,6 +143,27 @@ document.addEventListener("DOMContentLoaded", () => {
                     wordDiv.appendChild(collocP);
                 });
             });
+
+            // 為整個 wordDiv 加上事件監聽
+            wordDiv.addEventListener("mousemove", () => {
+                hasHoveredInside = true;
+                wordDiv.querySelectorAll("p").forEach((p) => {
+                    if (p.dataset.full) {
+                        p.textContent = p.dataset.full;
+                    }
+                });
+            });
+
+            wordDiv.addEventListener("mouseleave", () => {
+                if (hasHoveredInside) {
+                    wordDiv.querySelectorAll("p").forEach((p) => {
+                        if (p.dataset.base) {
+                            p.textContent = p.dataset.base;
+                        }
+                    });
+                }
+            });
+
 
             // Review buttons
             const reviewSection = document.createElement("div");
