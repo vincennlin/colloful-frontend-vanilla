@@ -98,6 +98,10 @@ function handleCollofulSubmit() {
         })
         .then((word) => {
             window.location.href = `word-detail.html?id=${word.id}`;
+            button.disabled = false;
+            button.textContent = "COLLOFUL!";
+            button.style.backgroundColor = ""; // 回復原樣
+            button.style.cursor = "";
         })
         .catch((err) => {
             console.error(err);
